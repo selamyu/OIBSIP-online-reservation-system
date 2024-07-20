@@ -5,8 +5,11 @@ Overview
 The Online Reservation System is a web-based application designed to manage reservations. It allows users to register, log in, make reservations, and cancel them. The system features:
 
 User Registration: Users can register with their details.
+
 User Login: Registered users can log in using their username and password.
+
 Reservation Form: After logging in, users can access a reservation form to make reservations.
+
 Reservation Cancellation: Users can cancel reservations by providing their user ID and reservation ID.
 
 **Features**
