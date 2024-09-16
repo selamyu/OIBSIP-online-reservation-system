@@ -1,4 +1,4 @@
-# OIBSIP-online-reservation-system
+# Online-reservation-system
 
 Online Reservation System
 Overview
