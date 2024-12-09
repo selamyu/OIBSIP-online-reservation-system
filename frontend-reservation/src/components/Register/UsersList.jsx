@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getAllUsers } from "../../api";
+import { getAllUsers, deleteUser, updateUser } from "../../api";
 import styles from "./UsersList.module.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import EditUserForm from "./EditUserForm";
 
 const UsersList = () => {
 	const [users, setUsers] = useState([]);
@@ -8,6 +11,7 @@ const UsersList = () => {
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(10);
 	const [totalPages, setTotalPages] = useState(0);
+	const [editingUser, setEditingUser] = useState(null);
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -22,6 +26,38 @@ const UsersList = () => {
 
 		fetchUsers();
 	}, [page, size]);
+
+	const handleDelete = async (userId) => {
+		try {
+			const confirm = window.confirm(
+				"Are you sure you want to delete this user?"
+			);
+			if (!confirm) return;
+			await deleteUser(userId);
+			toast.success("User deleted successfully");
+			setUsers(users.filter((user) => user.id !== userId));
+		} catch (error) {
+			toast.error("Failed to delete user.");
+		}
+	};
+
+	const handleEdit = (user) => {
+		setEditingUser(user);
+	};
+
+	const handleUpdate = async (updatedUser) => {
+		try {
+			const response = await updateUser(updatedUser.id, updatedUser);
+			setUsers(
+				users.map((user) =>
+					user.id === updatedUser.id ? response.data : user
+				)
+			);
+			setEditingUser(null);
+		} catch (error) {
+			setError("Failed to update user.");
+		}
+	};
 
 	const handlePreviousPage = () => {
 		setPage((prevPage) => Math.max(prevPage - 1, 0));
@@ -52,6 +88,7 @@ const UsersList = () => {
 								<th>Username</th>
 								<th>Password</th>
 								<th>Roles</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -61,6 +98,22 @@ const UsersList = () => {
 									<td>{user.username}</td>
 									<td>{user.password}</td>
 									<td>{user.roles}</td>
+									<td className={styles.actions}>
+										<button
+											className={styles.editButton}
+											onClick={() => handleEdit(user)}
+										>
+											Edit
+										</button>
+										<button
+											className={styles.deleteButton}
+											onClick={() =>
+												handleDelete(user.id)
+											}
+										>
+											Delete
+										</button>
+									</td>
 								</tr>
 							))}
 						</tbody>
@@ -96,6 +149,14 @@ const UsersList = () => {
 						</select>
 					</div>
 				</>
+			)}
+			<ToastContainer />
+			{editingUser && (
+				<EditUserForm
+					user={editingUser}
+					onUpdate={handleUpdate}
+					onClose={() => setEditingUser(null)}
+				/>
 			)}
 		</div>
 	);

@@ -41,14 +41,43 @@ export const makeReservation = async (reservationDetails) => {
 	return axios.post(`${API_URL2}/make-reservation`, reservationDetails);
 };
 
-
 // export const getAllUsers = async () => {
 // 	return axios.get(`${API_URL}/all-users`);
 // };
-export const getAllUsers = async (page, size) => {
-	return axios.get(`${API_URL}/all-users?page=${page}&size=${size}`);
+const getToken = () => {
+	return localStorage.getItem("token");
 };
 
+// export const getAllUsers = async (page, size) => {
+// 	const token = getToken();
+// 	return axios.get(`${API_URL}/all-users?page=${page}&size=${size}`);
+// };
+
+export const getAllUsers = async (page, size) => {
+	const token = getToken();
+	return await axios.get(`${API_URL}/all-users`, {
+		params: { page, size },
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+// export const deleteUser = (userId) => {
+// 	return axios.delete(`${API_URL}/${userId}`);
+// };
+export const deleteUser = async (userId) => {
+	const token = getToken();
+	return await axios.delete(`${API_URL}/delete${userId}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+export const updateUser = async (userId, userDetails) => {
+	return await axios.put(`${API_URL}/delete/${userId}`, userDetails);
+};
 
 export const getUserById = async (id) => {
 	try {
